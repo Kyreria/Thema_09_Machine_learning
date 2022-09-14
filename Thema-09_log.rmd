@@ -1,0 +1,14 @@
+---
+title: "Thema 09 Machine learning log"
+author: "Dennis Haandrikman"
+date: "14-09-2022"
+output:
+    pdf_document:
+        toc: true
+        toc_depth: 3
+---
+
+
+```{r}
+
+```
