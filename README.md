@@ -7,8 +7,12 @@ HanzeHogeschool Groningen
 
 This experiment is a means to explore machine learning practices,
 while trying to contribute to the current day relevant topic of vaccine prediction for diseases akin to COVID-19.
+If successful, this practice could be used to help vaccine creation based on peptide/protein sequences henceforth.
 
-It does so by trying to find correlations in peptide sequence characteristics and which characteristics are deterministic for a high valance calculation.
+As such, the experiment will recreate the experiment/project that was done with this dataset.
+Which is to calculate how many antigen binding sites are on COVID-19 peptide/protein sequences, based on the peptide/protein characteristics.
+
+The paper for this experiment can be read on the following link: https://www.biorxiv.org/content/10.1101/2020.07.27.224121v1
 
 
 ### Data

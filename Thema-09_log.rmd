@@ -2,7 +2,7 @@
 title: "Thema 09 Machine learning log"
 author: "Dennis Haandrikman"
 abstract: >
-    During this experiment on machine learning, an attempt has been made using Bcel & Sars peptide sequences to see if there is a correlation in specific peptide characteristics in low/high valance values.
+    During this experiment on machine learning, #TODO
 date: "14-09-2022"
 output:
     pdf_document:
@@ -24,21 +24,30 @@ library("ggplot2")
 
 
 #### 15/09/2022, 16/09/2022
-After acquiring the data from the database, it was time to import the data to see if there were any inconsistencies.
+After acquiring the data from the database, import the data to see if there were any inconsistencies.
 
 ```{r import_data}
 # Make sure the working directory is the main folder containing all the folders (project folder).
-# This is to make sure the working directory is on the main folder containing everything.
-working_directory <- getwd()
-# get the directory for the data_files
+# Get the data files and import them.
 bcel_data <- read.csv("./Data/input_bcell.csv", header = TRUE)
 sars_data <- read.csv("./Data/input_sars.csv", header = TRUE)
 covid_data <- read.csv("./Data/input_covid.csv", header = TRUE)
 
-pander(head(bcel_data))
-pander(head(sars_data))
-pander(head(covid_data))
+# print a quick head for the tables to see if it imported properly.
+# Due to protein seq being such a lengthy tab, excluding from the head to make the head showable.
+# In each dataset, the protein seq is the second column.
+pander(head(bcel_data[-2]))
+pander(head(sars_data[-2]))
+pander(head(covid_data[-2]))
+# here's the max length of a protein sequence to showcase why it was excluded from the head
+max(nchar(bcel_data[2,]))
 ```
 
+As we can see the information has been imported correctly.
+However, it is of importance to check for any NA values in the information.
+As such, an isnull check will be performed on the data
+
+```{r}
+```
 
 
