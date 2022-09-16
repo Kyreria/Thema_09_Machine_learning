@@ -1,6 +1,8 @@
 ---
 title: "Thema 09 Machine learning log"
 author: "Dennis Haandrikman"
+abstract: >
+    During this experiment on machine learning, an attempt has been made using Bcel & Sars peptide sequences to see if there is a correlation in specific peptide characteristics in low/high valance values.
 date: "14-09-2022"
 output:
     pdf_document:
@@ -8,7 +10,35 @@ output:
         toc_depth: 3
 ---
 
+```{r setup, include = FALSE}
+# Knit options/settings
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache = TRUE)
 
-```{r}
-
+# Required libraries
+library("pander")
+library("ggplot2")
 ```
+
+# Introduction
+
+
+#### 15/09/2022, 16/09/2022
+After acquiring the data from the database, it was time to import the data to see if there were any inconsistencies.
+
+```{r import_data}
+# Make sure the working directory is the main folder containing all the folders (project folder).
+# This is to make sure the working directory is on the main folder containing everything.
+working_directory <- getwd()
+# get the directory for the data_files
+bcel_data <- read.csv("./Data/input_bcell.csv", header = TRUE)
+sars_data <- read.csv("./Data/input_sars.csv", header = TRUE)
+covid_data <- read.csv("./Data/input_covid.csv", header = TRUE)
+
+pander(head(bcel_data))
+pander(head(sars_data))
+pander(head(covid_data))
+```
+
+
+
