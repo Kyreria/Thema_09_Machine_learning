@@ -1,0 +1,15 @@
+Name,Full name,Label,Data Type,Unit,Description
+parent_protein_id,Parent protein ID,Parent protein ID,character,Not needed,
+protein_seq,Parent protein sequence,Parent protein sequence,character,Not needed,
+start_position,Start position of peptide,Start position of peptide,numeric,Not needed,
+end_position,End position of peptide,End position of peptide,numeric,Not needed,
+peptide_seq,Peptide sequence,Peptide sequence,character,Not needed,
+chou_fasman,Chou-Fasman method,Chou-Fasman method,numeric,
+emini,Emini surface acessibility scale, Emini scale,numeric,
+kolaskar_tongaonkar,Kolaskar and Tongaonkar antigenicity scale,Kolaskar and Tongaonkar scale,numeric,
+parker,Parker Hydrophilicity prediction,Parker prediction,numeric,
+isoelectric_point,Isoelectric point,Isoelectric point,numeric,pH
+aromacity,Protein Aromaticity,Aromaticity of protein,numeric,
+hydrophobicity,Protein Hydrophobicity,Hydrophobicity of protein,numeric,
+stability,Protein Stability,Stability of protein,numeric,
+target,Target antibody valence,Target antibody valence,boolean,

@@ -12,6 +12,11 @@ If successful, this practice could be used to help vaccine creation based on pep
 As such, the experiment will recreate the experiment/project that was done with this dataset.
 Which is to calculate how many antigen binding sites are on COVID-19 peptide/protein sequences, based on the peptide/protein characteristics.
 
+As such the following research question has been formulated:
+
+Is it possible to predict if an amino-acid peptide promotes antibody-inducing activites, based on the peptide/protein structure and properties?
+And is it possible to try to expand or improve on the experiment and predictions that have been done previously on the same dataset regarding COVID-19?
+
 The paper for this experiment can be read on the following link: https://www.biorxiv.org/content/10.1101/2020.07.27.224121v1
 
 
@@ -41,8 +46,12 @@ In all three the datasets there is information of the protein and peptide:
 12. hydrophobicity; protein feature
 13. stability; protein feature 
 
+Further information about the variables is located in the peptide_protein_properties_codebook.csv file.
 
 ### Usage
 
+First, make sure that the data contains the information given above and is in the /Data folder.
+
+Then run the Thema-09_log.rmd to produce the pdf file.
 
 ### 

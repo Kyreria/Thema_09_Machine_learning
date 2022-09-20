@@ -22,8 +22,9 @@ library("ggplot2")
 
 # Introduction
 
+## Importing the data
+#### 15/09/2022, 16/09/2022, 20/09/2022
 
-#### 15/09/2022, 16/09/2022
 After acquiring the data from the database, import the data to see if there were any inconsistencies.
 
 ```{r import_data}
@@ -45,9 +46,33 @@ max(nchar(bcel_data[2,]))
 
 As we can see the information has been imported correctly.
 However, it is of importance to check for any NA values in the information.
-As such, an isnull check will be performed on the data
+As such, an is.na() check will be performed on the data
+
+```{r na_check}
+# Using any(is.na(x)) showcases in true/false if there are any NA values.
+any(is.na(bcel_data))
+any(is.na(sars_data))
+any(is.na(covid_data))
+```
+As we can see there aren't any missing values whatsoever in the datasets, as such we can continue to the actual EDA after we check the value-types each column has
 
 ```{r}
+# Information for the bcel_data dataset
+str(bcel_data)
+
+# Information for the sars_data dataset
+str(sars_data)
+
+#Information for the covid_data dataset
+str(covid_data)
 ```
 
+We can see that the covid_data dataset doesn't contain the target column at the end of the dataset.
 
+## EDA exploration
+#### 20/09/2022
+
+
+Now that we've made sure all the datasets have been imported properly and there are no missing values in the datasets.
+
+Since the datasets all go over the properties of the peptide/proteins, a codebook was set up with information on all the properties.
