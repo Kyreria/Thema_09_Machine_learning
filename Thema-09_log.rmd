@@ -3,7 +3,7 @@ title: "Thema 09 Machine learning log"
 author: "Dennis Haandrikman"
 abstract: >
     During this experiment on machine learning, #TODO
-date: "14-09-2022"
+date: "Sys.Date()"
 output:
     pdf_document:
         toc: true
@@ -18,6 +18,8 @@ knitr::opts_chunk$set(cache = TRUE)
 # Required libraries
 library("pander")
 library("ggplot2")
+library("tidyverse")
+library("ggpubr")
 ```
 
 # Introduction
@@ -30,9 +32,9 @@ After acquiring the data from the database, import the data to see if there were
 ```{r import_data}
 # Make sure the working directory is the main folder containing all the folders (project folder).
 # Get the data files and import them.
-bcel_data <- read.csv("./Data/input_bcell.csv", header = TRUE)
-sars_data <- read.csv("./Data/input_sars.csv", header = TRUE)
-covid_data <- read.csv("./Data/input_covid.csv", header = TRUE)
+bcel_data <- tibble(read.csv("./Data/input_bcell.csv", header = TRUE))
+sars_data <- tibble(read.csv("./Data/input_sars.csv", header = TRUE))
+covid_data <- tibble(read.csv("./Data/input_covid.csv", header = TRUE))
 
 # print a quick head for the tables to see if it imported properly.
 # Due to protein seq being such a lengthy tab, excluding from the head to make the head showable.
@@ -67,12 +69,86 @@ str(sars_data)
 str(covid_data)
 ```
 
-We can see that the covid_data dataset doesn't contain the target column at the end of the dataset.
+We can see that the covid_data dataset doesn't contain the target column at the end of the dataset, this is to be expected as the original use of the dataset was to calculate the target values for the covid_data.
+Next to that we can see that all the information has been loaded in properly.
+
+However, due to the b-cell & sars datasets were both used for the same use; training the model and contain the exact same columns, it would be wise to merge the 2 datasets in 1 so that it's easier to manage the data from the 2 sets.
+
+```{r combining_datasets}
+#combining the 2 datasets with use of rbind
+bcel_sars <- rbind(bcel_data,sars_data)
+# To see if the binding went properly, we're calling going to calculate the length of the dataframes before and after.
+# Calculating the supposed combined length of the new dataset
+print(paste("The number of columns we're expecting is: ", nrow(bcel_data) + nrow(sars_data)))
+print(paste("The number of columns that the new dataset contains: ", nrow(bcel_sars)))
+
+```
+
+As we can see above is that combining the 2 datasets was successful and no columns have been lost.
+
+At the very end of the data import and clean-up, it would be wise to convert target column in the dataset from an integer to a factor. This is so we can differentiate between the non-antibody promoting sequences and antibody promoting sequences.
+```{r factoring_target}
+bcel_sars$target <- factor(bcel_sars$target, labels = c("Non-promoting", "Promoting"))
+
+pander(data.frame(Before=bcel_data[5:15,14], After=bcel_sars[5:15,14]))
+```
+As we can see from the quick splice in the dataframe above, the value of 0 has been converted to Non-promoting and the value of 1 has been converted to Promoting. This has been completed as expected.
+
 
 ## EDA exploration
-#### 20/09/2022
+#### 20/09/2022, 23/09/2022, 25/09/2022, 26/09/2022
 
 
-Now that we've made sure all the datasets have been imported properly and there are no missing values in the datasets.
+Now that we've made sure all the datasets have been imported properly and there are no missing values in the datasets, it was time to perform an EDA exploration.
 
 Since the datasets all go over the properties of the peptide/proteins, a codebook was set up with information on all the properties.
+
+```{r code_book_import}
+code_book <- tibble(read.csv("peptide_protein_properties_codebook.csv", header=TRUE,sep=","))
+
+pander(head(code_book))
+```
+
+As we can see the code-book has been imported properly, the NA's in unit have been input correctly as there is no unit for those values.
+
+
+A summary for the data would be nice to oversee, however, not all the columns would be crucial to undergo a summary, for example the sequence ID, peptide ID, sequence can be omitted due to not being measurable data. As such the summary has only been performed on the protein characteristics.
+
+```{r summary}
+#Summary of the Bcel-data for the peptide/protein properties
+pander(summary(bcel_sars[6:13]))
+```
+
+Based on the summary data, it shows that we can't plot the peptide properties in a singular box-plot, also due to them being different scales which have no underlying correlation to each other and are all mathematical predictions.
+So to check for outliers it would be better to do single boxplots for each of them, due to their differing values/scale-range.
+
+The protein properties would be interesting to see if there is any correlation as they are all physical properties of the molecule itself, but due to the differing value-ranges, it isn't possible to include these in a single boxplot, as such, all the peptide & protein
+
+For ease of use later on, the protein properties will be grouped with the help of a single variable.
+
+```{r clustering_variables}
+#Cluster the variables for the protein properties
+peptide_data <-(6:9)
+protein_data <- (10:13)
+
+# Testing to see if the selections grab the proper data from the datasets.
+pander(head(bcel_sars[,peptide_data]))
+pander(head(bcel_sars[,protein_data]))
+```
+
+However, as you can
+As follows we'll perform
+
+```{r boxplots, fig.cap="boxplots of features"}
+# Setup a function to repeatably make the boxplots for the columns
+boxplotfun <- function(col_name) {
+  ggplot(bcel_sars, aes(x=target, y=!!sym(col_name))) + geom_boxplot() +
+    theme(plot.title = element_text(size=8), axis.title = element_text(size=8)) +
+    ylab(filter(code_book, Name == col_name)$Label) +
+    xlab(NULL) +
+    ggtitle(filter(code_book, Name == col_name)$Full.name)
+}
+property_names <- c("chou_fasman", "emini", "kolaskar_tongaonkar", "parker", "isoelectric_point", "aromaticity", "hydrophobicity", "stability")
+plot_finished <- lapply(property_names, boxplotfun)
+ggarrange(plotlist = plot_finished, ncol = 3, nrow=3)
+```

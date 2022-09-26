@@ -1,15 +1,15 @@
 Name,Full name,Label,Data Type,Unit,Description
-parent_protein_id,Parent protein ID,Parent protein ID,character,Not needed,
-protein_seq,Parent protein sequence,Parent protein sequence,character,Not needed,
-start_position,Start position of peptide,Start position of peptide,numeric,Not needed,
-end_position,End position of peptide,End position of peptide,numeric,Not needed,
-peptide_seq,Peptide sequence,Peptide sequence,character,Not needed,
-chou_fasman,Chou-Fasman method,Chou-Fasman method,numeric,
-emini,Emini surface acessibility scale, Emini scale,numeric,
-kolaskar_tongaonkar,Kolaskar and Tongaonkar antigenicity scale,Kolaskar and Tongaonkar scale,numeric,
-parker,Parker Hydrophilicity prediction,Parker prediction,numeric,
-isoelectric_point,Isoelectric point,Isoelectric point,numeric,pH
-aromacity,Protein Aromaticity,Aromaticity of protein,numeric,
-hydrophobicity,Protein Hydrophobicity,Hydrophobicity of protein,numeric,
-stability,Protein Stability,Stability of protein,numeric,
-target,Target antibody valence,Target antibody valence,boolean,
+parent_protein_id,Parent protein ID,Parent protein ID,character,NA,The ID for the protein
+protein_seq,Parent protein sequence,Parent protein sequence,character,NA,The amino acid sequence for the protein
+start_position,Start position of peptide,Start position of peptide,numeric,NA,The starting position of the peptide
+end_position,End position of peptide,End position of peptide,numeric,NA,The ending position of the peptide
+peptide_seq,Peptide sequence,Peptide sequence,character,NA,The amino acid sequence for the peptide fragment
+chou_fasman,Chou-Fasman method,Chou-Fasman scale,numeric,NA,A scale for predicting turns to predict antibody epitopes
+emini,Emini surface acessibility scale,Emini scale,numeric,NA,A scale for the surface accessibility
+kolaskar_tongaonkar,Kolaskar and Tongaonkar antigenicity scale,Kolaskar and Tongaonkar scale,numeric,NA,A semi-empirical method that makes use of the physicochemical properties of amino acid residues and their frequencies of occurrence to predict antigenic detriments on proteins
+parker,Parker Hydrophilicity prediction,Parker prediction scale,numeric,NA,A hydrophobic scale based on peptide retention times during HPLC on a reversed-phase column
+isoelectric_point,Isoelectric point,Isoelectric point of protein,numeric,pH,The isoelectric point is the pH at which a particular molecule carries no net electrical charge
+aromaticity,Protein Aromaticity,Aromaticity of protein,numeric,NA,Aromaticity is a property of conjugated cycloalkenes; so the amount of aromatic interactions
+hydrophobicity,Protein Hydrophobicity,Hydrophobicity of protein,numeric,NA,One of the primary forces in folding a protein basically how hydrophobic the protein is
+stability,Protein Stability,Stability of protein,numeric,NA,The energy difference between the folded and the unfolded state of the protein
+target,Target antibody valence,Target antibody valence,int,NA,If the protein has any antigen binding sites or not
