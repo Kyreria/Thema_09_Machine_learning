@@ -5,7 +5,7 @@ start_position,Start position of peptide,Start position of peptide,numeric,NA,Th
 end_position,End position of peptide,End position of peptide,numeric,NA,The ending position of the peptide
 peptide_seq,Peptide sequence,Peptide sequence,character,NA,The amino acid sequence for the peptide fragment
 chou_fasman,Chou-Fasman method,Chou-Fasman scale,numeric,NA,A scale for predicting turns to predict antibody epitopes
-emini,Emini surface acessibility scale,Emini scale,numeric,NA,A scale for the surface accessibility
+emini,Emini surface accessibility scale,Emini scale,numeric,NA,A scale for the surface accessibility
 kolaskar_tongaonkar,Kolaskar and Tongaonkar antigenicity scale,Kolaskar and Tongaonkar scale,numeric,NA,A semi-empirical method that makes use of the physicochemical properties of amino acid residues and their frequencies of occurrence to predict antigenic detriments on proteins
 parker,Parker Hydrophilicity prediction,Parker prediction scale,numeric,NA,A hydrophobic scale based on peptide retention times during HPLC on a reversed-phase column
 isoelectric_point,Isoelectric point,Isoelectric point of protein,numeric,pH,The isoelectric point is the pH at which a particular molecule carries no net electrical charge

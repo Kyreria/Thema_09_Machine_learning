@@ -1,9 +1,7 @@
 ---
 title: "Thema 09 Machine learning log"
 author: "Dennis Haandrikman"
-abstract: >
-    During this experiment on machine learning, #TODO
-date: "Sys.Date()"
+date: 27/09/2022
 output:
     pdf_document:
         toc: true
@@ -18,14 +16,46 @@ knitr::opts_chunk$set(cache = TRUE)
 # Required libraries
 library("pander")
 library("ggplot2")
-library("tidyverse")
+library("dplyr")
 library("ggpubr")
 ```
-
+\newpage
 # Introduction
 
+In modern day science, machine learning is playing a more crucial step by the year, allowing predictions of topics which would take years to discover with the help of experiments. However, a caveat to this is, that the prediction is only as good as the submitted data and the programmer who coded the algorythm for machine learning.
+
+As such it is important for one to understand what one can do with the data they've received and that they know the background of the data itself. As such it is important to garner background information about the data and to explore what's possible with the received data by the help of an EDA.
+
+
+## Exploring the background of the data
+
+It would be important to explore what the meaning and use for each data variable is before we start working with the data.
+
+First off we'll discuss what the origin of the data files is, the paper that this dataset was used in, references [IEDB](http://tools.iedb.org/bcell/help/)(http://tools.iedb.org/bcell/help/) as the main source for the peptide sequences, due to the website containing information about if an amino acid peptide exhibited anti-body inducing activty, which was marked as the target label.
+So both the bcel & sars peptide data have been sourced from IEDB, with the protein properties being filled in with help of the Uniprot website.
+The covid peptide/protein data has been calculated with help of the same websites, except for that these haven't been labelled by IEDB.
+
+So in the data-files the following columns are available and will be explained below:
+
+1. parent_protein_id; This is the parent protein ID, with which it can be found on Uniprot. It's a string containing a protein ID.
+2. protein_seq; This is the protein sequence of the full protein the peptide belongs to. It's a string that consists of amino acids.
+3. start_position; This is the starting position of the peptide in correspondence to the full protein sequence given in protein_seq. It's an integer.
+4. end_position; This is the ending position of the peptide in correspondence to the full protein sequence given in protein_seq. It's an integer.
+5. peptide_seq; This is the peptide sequence that is to be analyzed. It's a string containing amino acids.
+6. chou_fasman; This is a calculated peptide feature by the IEDB website, it predicts if there is a ß turn in the peptide. It's a double.
+7. emini; This is a calculated peptide feature by the IEDB website, it calculates how much relative surface accessibility is available on the peptide. It's a double
+8. kolaskar_tongaonkar; This is a calculated peptide prediction by the IEDB website in how antigenic the peptide is. It's a double.
+9. parker; This is a calculated peptide feature by the IEDB website in how hydrophobic the peptide is. It's a double.
+10. isoelectric_point; This is the calculated pH at which the charge of the protein is zero. It's a double.
+11. aromacity; This is a calculated protein feature in how many aromatic connections there are in the protein. It's a double.
+12. hydrophobicity; This is a calculated protein feature in how hydrophobic the complete protein is. It's a double.
+13. stability; This is a calculated protein feature that refers to the energy difference between the folded and unfolded state of the protein. It's a double.
+
+\newpage
 ## Importing the data
+
 #### 15/09/2022, 16/09/2022, 20/09/2022
+
 
 After acquiring the data from the database, import the data to see if there were any inconsistencies.
 
@@ -37,7 +67,7 @@ sars_data <- tibble(read.csv("./Data/input_sars.csv", header = TRUE))
 covid_data <- tibble(read.csv("./Data/input_covid.csv", header = TRUE))
 
 # print a quick head for the tables to see if it imported properly.
-# Due to protein seq being such a lengthy tab, excluding from the head to make the head showable.
+# Due to protein seq being such a lengthy tab, excluding from the head to make the head show able.
 # In each dataset, the protein seq is the second column.
 pander(head(bcel_data[-2]))
 pander(head(sars_data[-2]))
@@ -96,6 +126,7 @@ As we can see from the quick splice in the dataframe above, the value of 0 has b
 
 
 ## EDA exploration
+
 #### 20/09/2022, 23/09/2022, 25/09/2022, 26/09/2022
 
 
@@ -136,19 +167,116 @@ pander(head(bcel_sars[,peptide_data]))
 pander(head(bcel_sars[,protein_data]))
 ```
 
-However, as you can
-As follows we'll perform
+AS we can see the peptide and protein have both been called properly. We can also directly see that the values have different ranges.
 
-```{r boxplots, fig.cap="boxplots of features"}
+As follows we'll perform boxplots on each value to make sure 
+
+```{r boxplots, fig.height=10, fig.cap="boxplots of features"}
 # Setup a function to repeatably make the boxplots for the columns
 boxplotfun <- function(col_name) {
-  ggplot(bcel_sars, aes(x=target, y=!!sym(col_name))) + geom_boxplot() +
-    theme(plot.title = element_text(size=8), axis.title = element_text(size=8)) +
+  ggplot(bcel_sars, aes(x=target, y=!!sym(col_name), fill=target)) + geom_boxplot() +
+    theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
     ylab(filter(code_book, Name == col_name)$Label) +
     xlab(NULL) +
     ggtitle(filter(code_book, Name == col_name)$Full.name)
 }
+# Save the column names to a list for the function
 property_names <- c("chou_fasman", "emini", "kolaskar_tongaonkar", "parker", "isoelectric_point", "aromaticity", "hydrophobicity", "stability")
+# Run the column names through the plot function and catch the plots in a list
 plot_finished <- lapply(property_names, boxplotfun)
-ggarrange(plotlist = plot_finished, ncol = 3, nrow=3)
+# Arrange the plots in a neat grid
+ggarrange(plotlist = plot_finished, ncol = 2, nrow=4, common.legend = TRUE, legend = "bottom")
 ```
+
+Comparing the target values (non-promoting and promoting) with each other, an interesting observation can be made that there isn't much difference at first glance between the non-promoting and promoting peptide sequences. It would be interesting to see where the differences do lie.
+\newpage
+
+First of all a histogram will be made about the Emini surface accessibility scale to get a better view at how bad the outliers stretch outbound due to the the boxplot being unreadeable.
+
+```{r histogram_emini}
+# Make the histogram plot for the emini data
+ggplot(bcel_sars, aes(x=emini, fill=target)) + geom_histogram(binwidth=.5) +
+  theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
+  ylab(filter(code_book, Name == "emini")$Label) +
+  xlab("Emini value") +
+  ggtitle(filter(code_book, Name == "emini")$Full.name)
+```
+
+As we can see from the the histogram of the Emini surface accessibility scale, the histogram isn't neatly distributed and heavily leans to the left, confirming with the boxplot that there are outliers in the data that should be removed.
+
+
+```{r log transformation}
+
+```
+
+An interesting second observation is that the there are more peptides that are non-promoting than promoting.
+
+```{r outlier_removal_emini}
+
+# Calculate the quartiles and the interquartile range
+quartiles <- quantile(bcel_sars$emini, probs = c(0.25, 0.75), na.rm=FALSE)
+IQR <- IQR(bcel_sars$emini)
+
+# Calculate the upper quantile limit
+Upper <- quartiles[2] + 1.5*IQR
+
+#Remove any outlier above the upper quartile limit
+bcel_sars_no_outlier <- subset(bcel_sars, bcel_sars$emini < Upper)
+before <- dim(bcel_sars)
+after <- dim(bcel_sars_no_outlier)
+
+# Print the deleted amount of outliers.
+print(paste("The amount of removed outliers is: ", before[1] - after[1], "outliers"))
+
+#Get the variables out of the memory
+remove(quartiles)
+remove(IQR)
+remove(Upper)
+remove(before)
+remove(after)
+
+```
+
+The outliers that were removed are those above the upper quartile limit.
+After removing the outliers, it would be wise to print the emini histogram again, to see if this has improved the plot and if there is still a left-leaning histogram.
+
+```{r no_outlier_hist_emini}
+ggplot(bcel_sars_no_outlier, aes(x=emini, fill=target)) + geom_histogram(binwidth=.1) +
+  theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
+  ylab(filter(code_book, Name == "emini")$Label) +
+  xlab("Emini value") +
+  ggtitle(filter(code_book, Name == "emini")$Full.name)
+
+```
+
+
+In the figure above we can once again see the histogram plot of the emini scale, however, this is the dataset with the removed outliers. As we can see the histogram is still heavily leaning to the left and it still shows that there are a lot more non-promoting than promoting peptides.
+
+
+```{r boxplots_withou_outliers, fig.height=10, fig.cap="boxplots of features without outliers"}
+# Setup a function to repeatably make the boxplots for the columns
+boxplotfun <- function(col_name) {
+  ggplot(bcel_sars_no_outlier, aes(x=target, y=!!sym(col_name), fill=target)) + geom_boxplot() +
+    theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
+    ylab(filter(code_book, Name == col_name)$Label) +
+    xlab(NULL) +
+    ggtitle(filter(code_book, Name == col_name)$Full.name)
+}
+# Save the column names to a list for the function
+property_names <- c("chou_fasman", "emini", "kolaskar_tongaonkar", "parker", "isoelectric_point", "aromaticity", "hydrophobicity", "stability")
+# Run the column names through the plot function and catch the plots in a list
+plot_finished <- lapply(property_names, boxplotfun)
+# Arrange the plots in a neat grid
+ggarrange(plotlist = plot_finished, ncol = 2, nrow=4, common.legend = TRUE, legend = "bottom")
+```
+
+In the figure above we've replotted the boxplots to see if there is any difference that we can see due to the removal of the 1307 outliers. What we can see is that the emini boxplot has become read able, although there is no noticeable difference in the other boxplots due to the removal of 1307 outliers.
+After we've removed the outliers and checked if this would influence the other boxplots, it would be interesting to see if the peptide property scales have any correlation between each other. 
+
+```{r scatterplot_peptide}
+ggplot()
+```
+
+
+
+
