@@ -1,0 +1,40 @@
+---
+author: "Dennis Haandrikman"
+output:
+    pdf_document:
+      includes:
+        in_header:
+        before_body:
+
+bibliography:
+nocite: '@*'
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+knitr::opts_chunk$set(warning=FALSE)
+knitr::opts_chunk$set(fig.align="center")
+library(RWeka)
+library(pander)
+```
+
+```{r load_data, include = false}
+
+```
+\newpage
+# Introduction
+xx
+
+
+\newpage
+# Methods
+xx
+
+
+\newpage
+# Results
+xx
+
+
+\newpage
+# Discussion and Conclussion
+xx

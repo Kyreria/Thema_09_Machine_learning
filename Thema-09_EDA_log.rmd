@@ -21,6 +21,7 @@ library("dplyr")
 library("ggpubr")
 library("devtools")
 library("ggbiplot")
+library("RWeka")
 ```
 \newpage
 # Introduction
@@ -352,3 +353,11 @@ As we can see from the PCA is that some variables are closely interlinked, formi
 
 And further we can see that there aren't really any clear differences between promoting and non-promoting peptide sequences.
 
+### Export data
+
+After this, we'll export the data so that it can be used during machine learning, for this we'll export the normal data & the log transformed dataset.
+
+```{r data_export}
+write.arff(bcel_sars, file="./Data/bcel_sars_data.arff")
+write.arff(bcel_sars_log_transform, file="./Data/bcel_sars_log_transform.arff")
+```
