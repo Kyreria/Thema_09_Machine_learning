@@ -66,9 +66,9 @@ After acquiring the data from the database, import the data to see if there were
 ```{r import_data}
 # Make sure the working directory is the main folder containing all the folders (project folder).
 # Get the data files and import them.
-bcel_data <- tibble(read.csv("./Data/input_bcell.csv", header = TRUE))
-sars_data <- tibble(read.csv("./Data/input_sars.csv", header = TRUE))
-covid_data <- tibble(read.csv("./Data/input_covid.csv", header = TRUE))
+bcel_data <- tibble(read.csv("../Data/input_bcell.csv", header = TRUE))
+sars_data <- tibble(read.csv("../Data/input_sars.csv", header = TRUE))
+covid_data <- tibble(read.csv("../Data/input_covid.csv", header = TRUE))
 
 # print a quick head for the tables to see if it imported properly.
 # Due to protein seq being such a lengthy tab, excluding from the head to make the head show able.
@@ -139,7 +139,7 @@ Now that we've made sure all the datasets have been imported properly and there 
 Since the datasets all go over the properties of the peptide/proteins, a codebook was set up with information on all the properties.
 
 ```{r code_book_import}
-code_book <- tibble(read.csv("peptide_protein_properties_codebook.csv", header=TRUE,sep=","))
+code_book <- tibble(read.csv("../peptide_protein_properties_codebook.csv", header=TRUE,sep=","))
 
 pander(head(code_book))
 ```
@@ -192,6 +192,12 @@ property_names <- c("chou_fasman", "emini", "kolaskar_tongaonkar", "parker", "is
 plot_finished <- lapply(property_names, boxplotfun)
 # Arrange the plots in a neat grid
 ggarrange(plotlist = plot_finished, ncol = 2, nrow=4, common.legend = TRUE, legend = "bottom")
+
+ggsave(
+  filename="Figure1.png",
+  plot=last_plot(),
+  path = "../Data/Images"
+)
 ```
 
 Comparing the target values (non-promoting and promoting) with each other, an interesting observation can be made that there isn't much difference at first glance between the non-promoting and promoting peptide sequences. It would be interesting to see where the differences do lie.
@@ -201,7 +207,7 @@ A note-able observation is that the emini histogram has become unreadable due to
 
 First, a histogram will be made about the Emini surface accessibility scale to get a better view at how bad the outliers stretch outbound due to the boxplot being unreadable.
 
-```{r histogram_emini}
+```{r histogram_emini, fig.cap = "Histogram of the Emini data."}
 # Make the histogram plot for the emini data
 ggplot(bcel_sars, aes(x=emini, fill=target)) + geom_histogram(binwidth=.5) +
   theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
@@ -244,7 +250,7 @@ remove(after)
 The outliers that were removed are those above the upper quartile limit of the emini data.
 After removing the outliers, it would be wise to print the emini histogram again, to see if this has improved the plot, if there is still a left-leaning histogram and if it's visible that usable data has been cut off unnecessarily.
 
-```{r no_outlier_hist_emini}
+```{r no_outlier_hist_emini, fig.cap = "Histogram of the Emini data without the outliers above the UQL."}
 ggplot(bcel_sars_no_outlier, aes(x=emini, fill=target)) + geom_histogram(binwidth=.1) +
   theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
   ylab(filter(code_book, Name == "emini")$Label) +
@@ -286,20 +292,26 @@ remove(after)
 
 After transforming the log data, we'll plot the histogram with the log-transformed data.
 
-```{r histogram_log_transformation}
+```{r histogram_log_transformation, fig.cap = "Histogram of the log transformed Emini data"}
 # Plot the histogram for the log transformed emini data
 ggplot(bcel_sars_log_transform, aes(x=emini, fill=target)) + geom_histogram(binwidth=.1) +
   theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
   ylab(filter(code_book, Name == "emini")$Label) +
   xlab("Emini value") +
   ggtitle(filter(code_book, Name == "emini")$Full.name)
+
+ggsave(
+  filename="Figure2.png",
+  plot = last_plot(),
+  path = "../Data/Images"
+)
 ```
 
 After log-transforming the emini data, we can see that there is now a semi-decent histogram, showcasing that in regard to removing outliers, log transforming the emini data is the way forward. As this shows that the so-called outliers do play a part in the main data, showcasing that they shouldn't be removed.
 
 We'll plot the boxplot for emini again, but this time with the log-transformed data.
 
-```{r boxplots_logtransformed_emini, fig.cap = "Boxplot log-transformed Emini data"}
+```{r boxplots_logtransformed_emini, fig.cap = "Boxplot of the log-transformed Emini data"}
 # Plot a boxplot for the log-transformed Emini data
 ggplot(bcel_sars_log_transform, aes(x=target, y=emini, fill=target)) + geom_boxplot() +
   theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
@@ -309,6 +321,31 @@ ggplot(bcel_sars_log_transform, aes(x=target, y=emini, fill=target)) + geom_boxp
 ```
 
 As we can see there are still plenty of 'outliers' in the boxplots for the log-transformed data for the emini plots, albeit is the boxplot most certainly more readable and can the non-promoting and promoting data be compared. Upon seeing this, we'll continue using the log transformed information further.
+
+We'll also remake the complete group of boxplots for the report.
+
+```{r boxplot_alldata_logtrans_emini, fig.height = 10, fig.cap = "Boxplots of all data with log-transformed Emini data"}
+# Setup a function to repeatably make the boxplots for the columns
+boxplotfun <- function(col_name) {
+  ggplot(bcel_sars_log_transform, aes(x=target, y=!!sym(col_name), fill=target)) + geom_boxplot() +
+    theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
+    ylab(filter(code_book, Name == col_name)$Label) +
+    xlab(NULL) +
+    ggtitle(filter(code_book, Name == col_name)$Full.name)
+}
+# Save the column names to a list for the function
+property_names <- c("chou_fasman", "emini", "kolaskar_tongaonkar", "parker", "isoelectric_point", "aromaticity", "hydrophobicity", "stability")
+# Run the column names through the plot function and catch the plots in a list
+plot_finished <- lapply(property_names, boxplotfun)
+# Arrange the plots in a neat grid
+ggarrange(plotlist = plot_finished, ncol = 2, nrow=4, common.legend = TRUE, legend = "bottom")
+
+ggsave(
+  filename="Figure3.png",
+  plot=last_plot(),
+  path = "../Data/Images"
+)
+```
 
 ### Multivariate analysis
 
@@ -323,14 +360,21 @@ res
 
 As we can see the correlation matrix has been created successfully and will now be plotted as a heatmap.
 
-```{r heatmap_correlation_matrix}
+```{r heatmap_correlation_matrix, fig.cap = "Heatmap of the correlation between the properties"}
 # Plot the heatmap for the correlation matrix
-heatmap(x = res, scale="column", col = heat.colors(256))
+png("../Data/Images/Figure4_heatmap.png",
+    width =720,
+    height =480)
+plot.new()
+heatmap(x = res, scale="column", col = heat.colors(256),
+        main = "Relation heatmap of the different protein/peptide properties")
+dev.off()
+
 ```
 
-As we can see from the correlation matrix, some aspects of the data are indeed related to each other, while some other aspects, surprisingly aren't. This might be due to the different scales and ranges that are being used for each of the properties.
+As we can see from the plotted correlation matrix heatmap, some aspects of the data are indeed related to each other, while some other aspects, surprisingly aren't. This might be due to the different scales and ranges that are being used for each of the properties.
 
-Now that we've looked at the correlations betwen the properties, it's time to perform a Principal Component Analysis to visualize the variation in the dataset.
+Now that we've looked at the correlations between the properties, it's time to perform a Principal Component Analysis to visualize the variation in the dataset.
 
 ```{r PCA}
 # Calculate the PCA
@@ -340,9 +384,15 @@ summary(bcel_sars.pca)
 ```
 
 After calculating the PCA
-```{r PCA_plot}
-ggbiplot(bcel_sars.pca, groups = bcel_sars_log_transform$target, varname.size=3.5) +
+```{r PCA_plot, fig.cap = "PCA plot of the protein/peptide properties"}
+ggbiplot(bcel_sars.pca, groups = bcel_sars_log_transform$target, varname.size=4, size=0.001) +
         scale_color_manual(name="Antigenicity", values=c("yellow", "palegreen"))
+
+ggsave(
+  filename="Figure5.png",
+  plot = last_plot(),
+  path = "../Data/Images"
+)
 ```
 
 As we can see from the PCA is that some variables are closely interlinked, forming 4 different groups. These being:
@@ -358,6 +408,6 @@ And further we can see that there aren't really any clear differences between pr
 After this, we'll export the data so that it can be used during machine learning, for this we'll export the normal data & the log transformed dataset.
 
 ```{r data_export}
-write.arff(bcel_sars, file="./Data/bcel_sars_data.arff")
-write.arff(bcel_sars_log_transform, file="./Data/bcel_sars_log_transform.arff")
+write.arff(bcel_sars, file="../Data/bcel_sars_data.arff")
+write.arff(bcel_sars_log_transform, file="../Data/bcel_sars_log_transform.arff")
 ```
