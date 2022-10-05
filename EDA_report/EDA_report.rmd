@@ -20,8 +20,33 @@ bcel_sars_report <- read.arff("../Data/bcel_sars_data.arff")
 ```
 \newpage
 # Introduction
-xx
 
+In modern day science, machine learning is playing a more crucial step by the year, allowing predictions of topics which would take years to discover with the help of experiments. However, a caveat to this is, that the prediction is only as good as the submitted data and the programmer who coded the algorythm for machine learning.
+
+As such it is important for one to understand what one can do with the data they've received and that they know the background of the data itself. As such it is important to garner background information about the data and to explore what's possible with the received data by the help of an EDA.
+
+#TODO; betere overgang van introductie naar data-background
+It would be important to explore what the meaning and use for each data variable is before we start working with the data.
+
+First off we'll discuss what the origin of the data files is, the paper that this dataset was used in, references [IEDB](http://tools.iedb.org/bcell/help/)(http://tools.iedb.org/bcell/help/) as the main source for the peptide sequences, due to the website containing information about if an amino acid peptide exhibited anti-body inducing activty, which was marked as the target label.
+So both the bcel & sars peptide data have been sourced from IEDB, with the protein properties being filled in with help of the Uniprot website.
+The covid peptide/protein data has been calculated with help of the same websites, except for that these haven't been labelled by IEDB.
+
+So in the data-files the following columns are available and will be explained below:
+
+1. parent_protein_id; This is the parent protein ID, with which it can be found on Uniprot. It's a string containing a protein ID.
+2. protein_seq; This is the protein sequence of the full protein the peptide belongs to. It's a string that consists of amino acids.
+3. start_position; This is the starting position of the peptide in correspondence to the full protein sequence given in protein_seq. It's an integer.
+4. end_position; This is the ending position of the peptide in correspondence to the full protein sequence given in protein_seq. It's an integer.
+5. peptide_seq; This is the peptide sequence that is to be analyzed. It's a string containing amino acids.
+6. chou_fasman; This is a calculated peptide feature by the IEDB website, it predicts if there is a ß turn in the peptide. It's a double.
+7. emini; This is a calculated peptide feature by the IEDB website, it calculates how much relative surface accessibility is available on the peptide. It's a double
+8. kolaskar_tongaonkar; This is a calculated peptide prediction by the IEDB website in how antigenic the peptide is. It's a double.
+9. parker; This is a calculated peptide feature by the IEDB website in how hydrophobic the peptide is. It's a double.
+10. isoelectric_point; This is the calculated pH at which the charge of the protein is zero. It's a double.
+11. aromacity; This is a calculated protein feature in how many aromatic connections there are in the protein. It's a double.
+12. hydrophobicity; This is a calculated protein feature in how hydrophobic the complete protein is. It's a double.
+13. stability; This is a calculated protein feature that refers to the energy difference between the folded and unfolded state of the protein. It's a double.
 
 \newpage
 # Methods
