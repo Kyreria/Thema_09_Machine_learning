@@ -1,5 +1,5 @@
 ---
-title: "Thema 09 Machine learning log"
+title: "Machine learning EDA log"
 author: "Dennis Haandrikman"
 date: 27/09/2022
 output:
@@ -131,7 +131,7 @@ As we can see from the quick splice in the dataframe above, the value of 0 has b
 
 ## EDA exploration
 
-#### 20/09/2022, 23/09/2022, 25/09/2022, 26/09/2022
+#### 20/09/2022, 23/09/2022, 25/09/2022, 26/09/2022, 01/10/2022, 04/10/2022, 05/10/2022
 
 ### Codebook
 Now that we've made sure all the datasets have been imported properly and there are no missing values in the datasets, it was time to perform an EDA exploration.
@@ -249,7 +249,6 @@ remove(after)
 
 The outliers that were removed are those above the upper quartile limit of the emini data.
 After removing the outliers, it would be wise to print the emini histogram again, to see if this has improved the plot, if there is still a left-leaning histogram and if it's visible that usable data has been cut off unnecessarily.
-
 ```{r no_outlier_hist_emini, fig.cap = "Histogram of the Emini data without the outliers above the UQL."}
 ggplot(bcel_sars_no_outlier, aes(x=emini, fill=target)) + geom_histogram(binwidth=.1) +
   theme(plot.title = element_text(size=8), axis.title = element_text(size=8), axis.text = element_text(size=8)) +
@@ -258,13 +257,11 @@ ggplot(bcel_sars_no_outlier, aes(x=emini, fill=target)) + geom_histogram(binwidt
   ggtitle(filter(code_book, Name == "emini")$Full.name)
 
 ```
-
-
+\newpage
 In the figure above we can once again see the histogram plot of the emini scale, however, this is the dataset with the removed outliers. As we can see the histogram is still heavily leaning to the left and it still shows that there are a lot more non-promoting than promoting peptides.
 
 What is also visible in the plot is that the data looks cut off for the non-promoting peptides and that we're losing data.
 As such a log transformation will probably be needed to get a more normal distribution of the data, as we'll do below.
-
 
 ```{r log_transformation_emini}
 #Create a copy of the dataset to transform
@@ -349,7 +346,7 @@ ggsave(
 
 ### Multivariate analysis
 
-After analysis and resolving the anomaly that was the emini data in the boxplots, in the end, it was decided to not remove outliers nor continue with the log-normalized data until after the correlations between the different properties have been established.
+After analysis and resolving the anomaly that was the emini data in the boxplots, in the end, it was decided to continue with the log-normalized data and continue to determine the correlations between the different properties have been established.
 The correlations will be calculated with help of a correlation matrix and then plotted into a heatmap. It is expected that the protein & peptide properties will be correlated to each other.
 
 ```{r correlation_matrix}
@@ -360,8 +357,8 @@ res
 
 As we can see the correlation matrix has been created successfully and will now be plotted as a heatmap.
 
-```{r heatmap_correlation_matrix, fig.cap = "Heatmap of the correlation between the properties"}
-# Plot the heatmap for the correlation matrix
+```{r heatmap_correlation_matrix_save, include=FALSE}
+# save the heatmap for the correlation matrix
 png("../Data/Images/Figure4_heatmap.png",
     width =720,
     height =480)
@@ -369,6 +366,12 @@ plot.new()
 heatmap(x = res, scale="column", col = heat.colors(256),
         main = "Relation heatmap of the different protein/peptide properties")
 dev.off()
+```
+
+```{r heatmap_correlation_matrix, fig.cap = "Heatmap of the correlation between the properties"}
+#Print the heatmap so that it shows up in the PDF of the EDA_log
+heatmap(x = res, scale="column", col = heat.colors(256),
+        main = "Relation heatmap of the different protein/peptide properties")
 
 ```
 
@@ -383,11 +386,21 @@ bcel_sars.pca <- prcomp(bcel_sars_log_transform[,6:13], center = TRUE, scale. = 
 summary(bcel_sars.pca)
 ```
 
-After calculating the PCA
+After calculating the PCA, the PCA will be plotted with the help of the ggbiplot package.
 ```{r PCA_plot, fig.cap = "PCA plot of the protein/peptide properties"}
 ggbiplot(bcel_sars.pca, groups = bcel_sars_log_transform$target, varname.size=4, size=0.001) +
         scale_color_manual(name="Antigenicity", values=c("yellow", "palegreen"))
+```
 
+As we can see from the PCA is that some variables are closely interlinked, forming 4 different groups. These being:
+1. Chou_fasman, Parker & Emini
+2. Aromaticity, hydrophobicity
+3. stability, isoelectric_point
+4. Kolaskar_tongaonkar
+
+And further we can see that there aren't really any clear differences between promoting and non-promoting peptide sequences.
+
+```{r save_PCA_plot, include = FALSE}
 ggsave(
   filename="Figure5.png",
   plot = last_plot(),
@@ -395,19 +408,14 @@ ggsave(
 )
 ```
 
-As we can see from the PCA is that some variables are closely interlinked, forming 4 different groups. These being:
-1. Chour_fasman, Parker & Emini
-2. Aromaticity, hydrophobicity
-3. stability, isoelectric_point
-4. Kolaskar_tongaonkar
-
-And further we can see that there aren't really any clear differences between promoting and non-promoting peptide sequences.
-
 ### Export data
 
 After this, we'll export the data so that it can be used during machine learning, for this we'll export the normal data & the log transformed dataset.
 
 ```{r data_export}
-write.arff(bcel_sars, file="../Data/bcel_sars_data.arff")
-write.arff(bcel_sars_log_transform, file="../Data/bcel_sars_log_transform.arff")
+#Write the data files to a .arff format for use in Weka
+bcel_sars_export <- bcel_sars[,6:14]
+bcel_sars_log_transform_export <- bcel_sars_log_transform[,6:14]
+write.arff(bcel_sars_export, file="../Data/bcel_sars_data.arff")
+write.arff(bcel_sars_log_transform_export, file="../Data/bcel_sars_log_transform.arff")
 ```
