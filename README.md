@@ -52,14 +52,19 @@ Further information about the variables is located in the peptide_protein_proper
 
 First, make sure that the data contains the information given above and is in the /Data folder.
 
-Make sure to have the required packages installed for R, they are as follows; pander, ggplot2, dplyr & ggpubr.
+Make sure to have the required packages installed for R, they are as follows; pander, ggplot2, dplyr, ggpubr, devtools, ggbiplot & RWeka.
 If they are not installed make sure to run the code that is below this:
 
+```r
 install.packages("pander")
 install.packages("ggplot2")
 install.packages("dplyr")
 install.packages("ggpubr")
-
+install.packages("devtools")
+library("devtools")
+install_github("vqv/ggbiplot")
+install.packages("RWeka")
+```
 
 Then run the Thema-09_log.rmd to produce the pdf file for the EDA explanation.
 
