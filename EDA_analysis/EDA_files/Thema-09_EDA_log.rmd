@@ -22,6 +22,7 @@ library("ggpubr")
 library("devtools")
 library("ggbiplot")
 library("RWeka")
+library("data.table")
 ```
 \newpage
 # Introduction
@@ -416,6 +417,43 @@ After this, we'll export the data so that it can be used during machine learning
 #Write the data files to a .arff format for use in Weka
 bcel_sars_export <- bcel_sars[,6:14]
 bcel_sars_log_transform_export <- bcel_sars_log_transform[,6:14]
-write.arff(bcel_sars_export, file="../Data/bcel_sars_data.arff")
-write.arff(bcel_sars_log_transform_export, file="../Data/bcel_sars_log_transform.arff")
+write.arff(bcel_sars_export, file="../Data/Weka/bcel_sars_data.arff")
+write.arff(bcel_sars_log_transform_export, file="../Data/Weka/bcel_sars_log_transform.arff")
+```
+
+
+## Weka Exploration
+
+After the data has been exported to use in WEKA, it would be wise to run all available algorithms on the exported data.
+As such the following algorithms will be run with basic settings on the data:
+1. ZeroR
+2. OneR
+3. J48
+4. RandomTree
+5. RandomForest
+6. IBk
+7. Simplelogistic
+8. SMO
+9. NaiveBayes
+
+The results of that run can be seen below.
+
+```{r weka_exploratory_analysis}
+exploratory_weka <- as.data.table(read.arff(file = "../Data/Weka/exploratory_weka_algorythm_analysis.arff"))
+
+wanted_metrics <- c("Percent_correct", "True_positive_rate", "True_negative_rate", "Area_under_ROC")
+exploratory_weka_statistics <- exploratory_weka[j = lapply(.SD, mean), .SDcols = wanted_metrics, by = .(Key_Scheme, Key_Scheme_options)]
+exploratory_weka_statistics
+```
+
+Looking at the results, we can see that the randomForest has the highest percentage of correctly predicted antigen binding sites.
+Next to that the randomForest also has the best ROC curve.
+It is therefore decided that we'll continue using randomForest as the base of our machine learning algorithm.
+In doing so we'll experiment with the settings and a cost sensitive classifier using randomForest.
+
+```{r}
+# TODO, run better cost_sensitive_test
+Cost_sensitive_test <- as.data.table(read.arff(file = "../Data/Weka/Cost_sensitive_test_machine_learning.arff"))
+Cost_sensitive_test_statistics <- Cost_sensitive_test[j = lapply(.SD, mean), .SDcols = wanted_metrics, by = .(Key_Scheme, Key_Scheme_options)]
+Cost_sensitive_test_statistics
 ```
