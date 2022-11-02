@@ -1,12 +1,11 @@
 package nl.bioinf.dhaandrikman.ML_java_wrapper;
 
 import weka.classifiers.meta.AttributeSelectedClassifier;
-import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.Attribute;
 import weka.core.FastVector;
-import weka.classifiers.trees.RandomForest;
+import weka.classifiers.Classifier;
 import weka.core.converters.ConverterUtils.DataSource;
 
 import java.io.IOException;
