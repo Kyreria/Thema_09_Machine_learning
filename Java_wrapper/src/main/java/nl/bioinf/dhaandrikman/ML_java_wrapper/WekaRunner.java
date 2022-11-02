@@ -1,15 +1,10 @@
 package nl.bioinf.dhaandrikman.ML_java_wrapper;
 
-import weka.classifiers.meta.AttributeSelectedClassifier;
 import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.Attribute;
-import weka.core.FastVector;
 import weka.classifiers.Classifier;
 import weka.core.converters.ConverterUtils.DataSource;
-
 import java.io.IOException;
-import java.util.Random;
 
 /**
  * If you saved a model to a file in WEKA, you can use it reading the generated java object.
@@ -37,8 +32,8 @@ public class WekaRunner {
         //String datafile = args[0];
         String testfile = args[0];
         try {
-            RandomForest rf = loadClassifier();
-            Instances unknownInstances = loadArff(unknownFile);
+            Classifier rf = loadClassifier();
+            Instances unknownInstances = loadArff(testfile);
             System.out.println("\nunclassified unknownInstances = \n" + unknownInstances);
             classifyNewInstance(rf, unknownInstances);
 
@@ -47,20 +42,20 @@ public class WekaRunner {
         }
     }
 
-    private void classifyNewInstance(RandomForest tree, Instances unknownInstances) throws Exception {
+    private void classifyNewInstance(Classifier myClassifier, Instances unknownInstances) throws Exception {
         // create copy
         Instances labeled = new Instances(unknownInstances);
         // label instances
         for (int i = 0; i < unknownInstances.numInstances(); i++) {
-            double clsLabel = tree.classifyInstance(unknownInstances.instance(i));
+            double clsLabel = myClassifier.classifyInstance(unknownInstances.instance(i));
             labeled.instance(i).setClassValue(clsLabel);
         }
         System.out.println("\nNew, labeled = \n" + labeled);
     }
 
-    private AttributeSelectedClassifier loadClassifier() throws Exception {
+    private Classifier loadClassifier() throws Exception {
         //get own model
-        return (AttributeSelectedClassifier) weka.core.SerializationHelper.read(modelFile);
+        return (Classifier) weka.core.SerializationHelper.read(modelFile);
     }
     private void printInstances(Instances instances) {
         int numAttributes = instances.numAttributes();
@@ -85,9 +80,9 @@ public class WekaRunner {
         }
     }
 
-    private Instances loadArff(String datafile) throws IOException {
+    private Instances loadArff(String testfile) throws IOException {
         try {
-            DataSource source = new DataSource(datafile);
+            DataSource source = new DataSource(testfile);
             Instances data = source.getDataSet();
             // setting class attribute if the data format does not provide this information
             // For example, the XRFF format saves the class attribute information as well
