@@ -457,3 +457,26 @@ Cost_sensitive_test <- as.data.table(read.arff(file = "../Data/Weka/Cost_sensiti
 Cost_sensitive_test_statistics <- Cost_sensitive_test[j = lapply(.SD, mean), .SDcols = wanted_metrics, by = .(Key_Scheme, Key_Scheme_options)]
 Cost_sensitive_test_statistics
 ```
+
+As we can see from the different tests, the RandomForest with the 500 iterations is the best algorithm due to having the highest percent correct & having the largest ROC curve, ROC curve can be seen below in the following images.
+
+```{r ROC_plots, fig.cap = "ROC plots of the protein/peptide properties."}
+roc.non_promoting <- read.arff("../Data/Weka/ROC_curve/Non-promoting_ROC-curve.arff")
+roc.promoting <- read.arff("../Data/Weka/ROC_curve/Promoting_ROC-curve.arff")
+
+ggplot(data = roc.non_promoting)  +
+  geom_point(aes(`False Positive Rate`, `True Positive Rate`, colour = Threshold)) +
+             ggtitle("ROC plot for the non-promoting classification.")
+
+ggplot(data = roc.promoting) +
+  geom_point(aes(`False Positive Rate`, `True Positive Rate`, colour = Threshold)) +
+  ggtitle("ROC plot for the promoting classification.")
+
+```
+
+As we can see from the 2 graphs above, we can see that the graph curves are similar for both the non-promoting and the promoting classifications.
+
+With this it has become clear to use the randomForest with the following settings in Weka to generate the model:
+randomForest -P 100 -I 500 -num-slots 1 -K 0 -M 1.0 -V 0.001 -S 1
+
+Hereby the only difference to default being that there are 500 iterations of the trees in the forest instead of 100.
