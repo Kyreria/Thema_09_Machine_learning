@@ -14,6 +14,8 @@ knitr::opts_chunk$set(warning=FALSE)
 knitr::opts_chunk$set(fig.align="center")
 library(RWeka)
 library(pander)
+library("RWeka")
+library("data.table")
 ```
 
 ```{r load_data, include = FALSE}
