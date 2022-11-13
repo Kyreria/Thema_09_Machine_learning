@@ -1,10 +1,10 @@
 package nl.bioinf.dhaandrikman.Java_wrapper;
 
 
-import weka.core.Instance;
 import weka.core.Instances;
 import weka.classifiers.Classifier;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.SerializationHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,7 +32,7 @@ public class WekaRunner {
     private void start(String[] args) {
         //String datafile = args[0];
         String testfile = args[0];
-        System.out.println("Loading Data file: " + testfile)
+        System.out.println("Loading Data file: " + testfile);
         try {
             Classifier rf = loadClassifier();
             Instances unknownInstances = loadArff(testfile);
@@ -47,43 +47,31 @@ public class WekaRunner {
     private void classifyNewInstance(Classifier myClassifier, Instances unknownInstances) throws Exception {
         // create copy
         Instances labeled = new Instances(unknownInstances);
-        // label instances
+        // label instances and prints them to the terminal
         for (int i = 0; i < unknownInstances.numInstances(); i++) {
             double clsLabel = myClassifier.classifyInstance(unknownInstances.instance(i));
             labeled.instance(i).setClassValue(clsLabel);
         }
+        // Print the information to the label
         System.out.println("\nNew, labeled = \n" + labeled);
     }
 
     private Classifier loadClassifier() throws Exception {
         //get own model
         String modelFile = "/RandomForest_500_iterations.model";
-        return (Classifier) weka.core.SerializationHelper.read(modelFile);
-    }
-    private void printInstances(Instances instances) {
-        int numAttributes = instances.numAttributes();
-
-        for (int i = 0; i < numAttributes; i++) {
-            System.out.println("attribute " + i + " = " + instances.attribute(i));
-        }
-
-        System.out.println("class index = " + instances.classIndex());
-//        Enumeration<Instance> instanceEnumeration = instances.enumerateInstances();
-//        while (instanceEnumeration.hasMoreElements()) {
-//            Instance instance = instanceEnumeration.nextElement();
-//            System.out.println("instance " + instance. + " = " + instance);
-//        }
-
-        //or
-        int numInstances = instances.numInstances();
-        for (int i = 0; i < numInstances; i++) {
-            if (i == 5) break;
-            Instance instance = instances.instance(i);
-            System.out.println("instance = " + instance);
+        try {
+            InputStream in = getClass().getResourceAsStream(modelFile);
+            return (Classifier) SerializationHelper.read(in);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
     private Instances loadArff(String testfile) throws IOException {
+        /**
+         * Load the arff data file that the user designated.
+         */
         try {
             DataSource source = new DataSource(testfile);
             Instances data = source.getDataSet();
