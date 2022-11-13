@@ -68,4 +68,25 @@ install.packages("RWeka")
 
 Then run the Thema-09_log.rmd to produce the pdf file for the EDA explanation.
 
-### 
+### Tree of the project
+```
+├───EDA_analysis
+│   ├───Data
+│   │   ├───Images
+│   │   └───Weka
+│   │       ├───Models
+│   │       └───ROC_curve
+│   ├───EDA_files
+│   └───EDA_report
+└───Java_wrapper
+    └───ML_Java_Wrapper
+        ├───src
+        │   └───main
+        │       ├───java
+        │       │   └───nl
+        │       │       └───bioinf
+        │       │           └───dhaandrikman
+        │       │               └───Java_wrapper
+        │       └───resources
+        └───test_data
+```

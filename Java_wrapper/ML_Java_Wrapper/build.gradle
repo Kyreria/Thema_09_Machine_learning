@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'nl.bioinf.dhaandrikman.java_wrapper'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 // Define main class for the Java app
 mainClassName = 'nl.bioinf.dhaandrikman.Java_wrapper.WekaRunner'
