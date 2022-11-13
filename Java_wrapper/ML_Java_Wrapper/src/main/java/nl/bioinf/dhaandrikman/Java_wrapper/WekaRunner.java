@@ -16,7 +16,7 @@ import java.util.Arrays;
  * This is designed to work with user input, provided through the command line in a terminal.
  * The class is final, as it wasn't meant to be extended.
  *
- * @ Authoer Dennis Haandrikman (347655)
+ * @ Author Dennis Haandrikman (347655)
  */
 public class WekaRunner {
     /**
