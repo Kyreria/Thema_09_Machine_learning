@@ -9,7 +9,8 @@ Thema-09_log_files/
 EDA_files/Thema-09_EDA_log.log
 EDA_files/Thema-09_EDA_log_cache
 EDA_files/Thema-09_EDA_log_files
-Java_wrapper/.gradle/
-Java_wrapper/gradle/
-Java_wrapper/gradlew
-Java_wrapper/gradlew.bat
+Java_wrapper/ML_Java_wrapper/.gradle/
+Java_wrapper/ML_Java_wrapper/gradle/
+Java_wrapper/ML_Java_wrapper/gradlew
+Java_wrapper/ML_Java_wrapper/gradlew.bat
+Java_wrapper/ML_Java_Wrapper/build
