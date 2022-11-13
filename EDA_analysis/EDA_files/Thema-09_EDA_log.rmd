@@ -452,7 +452,6 @@ It is therefore decided that we'll continue using randomForest as the base of ou
 In doing so we'll experiment with the settings and a cost sensitive classifier using randomForest.
 
 ```{r}
-# TODO, run better cost_sensitive_test
 Cost_sensitive_test <- as.data.table(read.arff(file = "../Data/Weka/Cost_sensitive_test_machine_learning.arff"))
 Cost_sensitive_test_statistics <- Cost_sensitive_test[j = lapply(.SD, mean), .SDcols = wanted_metrics, by = .(Key_Scheme, Key_Scheme_options)]
 Cost_sensitive_test_statistics
@@ -460,19 +459,38 @@ Cost_sensitive_test_statistics
 
 As we can see from the different tests, the RandomForest with the 500 iterations is the best algorithm due to having the highest percent correct & having the largest ROC curve, ROC curve can be seen below in the following images.
 
-```{r ROC_plots, fig.cap = "ROC plots of the protein/peptide properties."}
+```{r load_information_for_ROC_plots}
 roc.non_promoting <- read.arff("../Data/Weka/ROC_curve/Non-promoting_ROC-curve.arff")
 roc.promoting <- read.arff("../Data/Weka/ROC_curve/Promoting_ROC-curve.arff")
-
+```
+```{r non_promoting_ROC_plot, fig.cap = "ROC plot of the protein/peptide properties that are Non-Promoting"}
 ggplot(data = roc.non_promoting)  +
   geom_point(aes(`False Positive Rate`, `True Positive Rate`, colour = Threshold)) +
              ggtitle("ROC plot for the non-promoting classification.")
+```
+```{r saving_non_promoting_ROC}
+ggsave(
+  filename="Figure6.png",
+  plot = last_plot(),
+  path = "../Data/Images"
+)
+```
 
+```{r promoting_ROC_plot, fig.cap = "ROC plot of the protein/peptide properties that are Promoting"}
 ggplot(data = roc.promoting) +
   geom_point(aes(`False Positive Rate`, `True Positive Rate`, colour = Threshold)) +
   ggtitle("ROC plot for the promoting classification.")
 
 ```
+
+```{r saving_promoting_ROC}
+ggsave(
+  filename="Figure7.png",
+  plot = last_plot(),
+  path = "../Data/Images"
+)
+```
+
 
 As we can see from the 2 graphs above, we can see that the graph curves are similar for both the non-promoting and the promoting classifications.
 
