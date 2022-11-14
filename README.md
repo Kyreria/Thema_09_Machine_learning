@@ -1,5 +1,5 @@
 # Thema 09 Machine learning
-Dennis Haandrikman,
+Dennis Haandrikman, 347655,
 HanzeHogeschool Groningen
 
 
@@ -14,7 +14,7 @@ Which is to calculate how many antigen binding sites are on COVID-19 peptide/pro
 
 As such the following research question has been formulated:
 
-Is it possible to predict if an amino-acid peptide promotes antibody-inducing activites, based on the peptide/protein structure and properties?
+Is it possible to predict if an amino-acid peptide promotes antibody-inducing activities, based on the peptide/protein structure and properties?
 And is it possible to try to expand or improve on the experiment and predictions that have been done previously on the same dataset regarding COVID-19?
 
 The paper for this experiment can be read on the following link: https://www.biorxiv.org/content/10.1101/2020.07.27.224121v1
@@ -50,36 +50,62 @@ Further information about the variables is located in the peptide_protein_proper
 
 ### Usage
 
-First, make sure that the data contains the information given above and is in the /Data folder.
-
-Make sure to have the required packages installed for R, they are as follows; pander, ggplot2, dplyr, ggpubr, devtools, ggbiplot & RWeka.
-If they are not installed make sure to run the code that is below this:
-
-```r
-install.packages("pander")
-install.packages("ggplot2")
-install.packages("dplyr")
-install.packages("ggpubr")
-install.packages("devtools")
-library("devtools")
-install_github("vqv/ggbiplot")
-install.packages("RWeka")
-```
-
-Then run the Thema-09_log.rmd to produce the pdf file for the EDA explanation.
+The usage for the EDA and the Java_wrapper are located in both sub-folders.
 
 ### Tree of the project
 ```
+│   .gitattributes
+│   .gitignore
+│   README.md
+│
 ├───EDA_analysis
+│   │   peptide_protein_properties_codebook.csv
+│   │   README.md
+│   │
 │   ├───Data
+│   │   │   input_bcell.csv
+│   │   │   input_covid.csv
+│   │   │   input_sars.csv
+│   │   │
 │   │   ├───Images
+│   │   │       Figure1.png
+│   │   │       Figure2.png
+│   │   │       Figure3.png
+│   │   │       Figure4_heatmap.png
+│   │   │       Figure5.png
+│   │   │       Figure6.png
+│   │   │       Figure7.png
+│   │   │
 │   │   └───Weka
+│   │       │   bcel_sars_data.arff
+│   │       │   bcel_sars_log_transform.arff
+│   │       │   Cost_sensitive_test_machine_learning.arff
+│   │       │   exploratory_weka_algorythm_analysis.arff
+│   │       │   exploratory_weka_algorythm_analysis.exp
+│   │       │
 │   │       ├───Models
+│   │       │       RandomForest_500_iterations.model
+│   │       │       RandomForest_500_iterations_randomtiebreaks.model
+│   │       │
 │   │       └───ROC_curve
+│   │               Non-promoting_ROC-curve.arff
+│   │               Promoting_ROC-curve.arff
+│   │
 │   ├───EDA_files
+│   │       Thema-09_EDA_log.pdf
+│   │       Thema-09_EDA_log.rmd
+│   │
 │   └───EDA_report
+│           EDA_report_Dennis_Haandrikman.pdf
+│           EDA_report_Dennis_Haandrikman.rmd
+│
 └───Java_wrapper
+    │   README.md
+    │
     └───ML_Java_Wrapper
+        │   build.gradle
+        │   settings.gradle
+        │
         ├───src
         │   └───main
         │       ├───java
@@ -87,6 +113,14 @@ Then run the Thema-09_log.rmd to produce the pdf file for the EDA explanation.
         │       │       └───bioinf
         │       │           └───dhaandrikman
         │       │               └───Java_wrapper
+        │       │                       WekaRunner.java
+        │       │
         │       └───resources
-        └───test_data
+        │               RandomForest_500_iterations.model
+        │
+        ├───test_data
+        │       bcel_sars_log_transform_test_data.arff
+        │
+        └───Usable_Build
+                MLModelWrapper_with_dep-1.0-all.jar
 ```
